@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmos em Equilíbrio: Gravidade e Energia Escura Desvendadas</title>
+	<link href="https://fonts.googleapis.com/css2?family=Exo:wght@400;700&display=swap" rel="stylesheet">
+	<link rel="icon" href="Arquivos/logo.webp" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+	<script src="main.js" defer> </script>
+</head>
+	
+<body>
+
+	<section class="cabecalho2">
+		<div class="controles-gerais">
+    		<div class="controles-simulacao">
+        		<button id="iniciar-simulacao">Simular Gravidade</button>
+	        	<button id="iniciar-simulacao2">Simular Energia Escura</button>
+    	   		<button id="iniciar-simulacao3">Simular Os Dois</button>
+    		</div>
+
+			<div class="controles-gravidade">
+				<button id="aumentar-gravidade">+ Gravidade</button>
+           		<button id="diminuir-gravidade">- Gravidade</button>
+        		<span id="valor-gravidade">G: 10</span>
+    		</div>
+		
+			<div class="controles-energia-escura">
+				<button id="aumentar-energia-escura">+ Energia Escura</button>
+            	<button id="diminuir-energia-escura">- Energia Escura</button>
+        		<span id="valor-energia-escura">E: 0.0010</span>
+    		</div>
+			<div class="controles-zoom">
+				<button id="zoom-in">+ Zoom</button>
+				<button id="zoom-out">- Zoom</button>
+				<span id="valor-zoom">Z: 100%</span>
+			</div>
+		</div>
+	
+		<div id="simulacao-container">
+			<canvas id="canvas"></canvas>
+		</div>
+	</section>
+</body>
+</html>

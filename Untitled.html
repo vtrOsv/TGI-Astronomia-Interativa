@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmos em Equilíbrio: Gravidade e Energia Escura Desvendadas</title>
+	<link href="https://fonts.googleapis.com/css2?family=Exo:wght@400;700&display=swap" rel="stylesheet">
+	<link rel="icon" href="Arquivos/logo.webp" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+	<script src="main.js" defer> </script>
+</head>
+	
+<body>
+	<section class="cabecalho">
+    	<img src="Arquivos/universo.png" alt="Imagem de fundo representando o espaço">
+		<div class="Texto">
+		
+			<div>
+				<h1>TGI</h1>
+        		<h2>Forças em Conflito: Uma Jornada Interativa pela Gravidade e Energia Escura</h2>
+				<h3> João Guilherme Cavalcante 23304031 <br/>  &amp; Vitor de Oliveira Silva 23384301</h3>
+			</div>
+
+		</div>
+	</section>
+	
+	<section class="sobre-projeto">
+		<div id="Texto2">
+		
+			<p>O universo é um vasto e intrigante espaço de mistérios. Neste projeto, exploramos duas forças fundamentais que o moldam: a gravidade e a energia escura. Através de simulações interativas, você terá uma visão única de como elas atuam e influenciam a dança das galáxias e estrelas,</p>
+				
+			<p>Para acessar a versão completa do trabalho, clique no link <a href="Arquivos/Astronomia Interativa - João Guilherme C A D de Araújo e Vitor O Silva 19 11 2023 (1).pdf" target="_blank"> "Astronomia Interativa.PDF"</a></p>
+   
+			<p>Descubra através desta simulação a gravidade em ação, uma força fundamental que molda o cosmos, desde uma simples maçã despencando até o ballet dos planetas orbitando nosso sol. Esta simulação interativa permite que você observe como a gravidade influencia as trajetórias e interações entre corpos celestes, proporcionando um vislumbre do elo invisível que mantém o universo unido.</p>
+
+ 			<p>Mas, além desse fenômeno, a simulação também permite explorar a energia escura, uma força misteriosa impulsionando a expansão acelerada do universo. Mesmo sem a capacidade de detectá-la diretamente, a energia escura se manifesta nas distâncias crescentes entre as galáxias. Aqui, você pode visualizar seu efeito sutil mas poderoso, que desafia a atração gravitacional.</p>
+
+			<p>Enquanto a gravidade trabalha para atrair e manter o universo unido, a energia escura parece ter a tarefa oposta, empurrando as galáxias para longe umas das outras. A interação dessas duas forças molda o destino do nosso cosmos.</p>
+			
+			<p>Abaixo está a nossa simulação interativa em uma janela dedicada. Caso deseje explorar uma versão mais ampla clique <a href="segunda-pagina.html" target="_blank">"aqui".</a></p>
+		
+			<p>Esperamos que esta simulação ofereça insights e estimule ainda mais o interesse e a curiosidade sobre o vasto cosmos. Agradecemos ao nosso orientador e a todos que contribuíram e apoiaram esta pesquisa.</p>
+		
+			<p><br/></p>
+		</div>
+	
+		<div class="controles-gerais">
+    		<div class="controles-simulacao">
+        		<button id="iniciar-simulacao">Simular Gravidade</button>
+	        	<button id="iniciar-simulacao2">Simular Energia Escura</button>
+    	   		<button id="iniciar-simulacao3">Simular Os Dois</button>
+    		</div>
+
+			<div class="controles-gravidade">
+				<button id="aumentar-gravidade">+ Gravidade</button>
+           		<button id="diminuir-gravidade">- Gravidade</button>
+        		<span id="valor-gravidade">G: 10</span>
+    		</div>
+		
+			<div class="controles-energia-escura">
+				<button id="aumentar-energia-escura">+ Energia Escura</button>
+            	<button id="diminuir-energia-escura">- Energia Escura</button>
+        		<span id="valor-energia-escura">E: 0.0010</span>
+    		</div>
+			<div class="controles-zoom">
+				<button id="zoom-in">+ Zoom</button>
+				<button id="zoom-out">- Zoom</button>
+				<span id="valor-zoom">Z: 100%</span>
+			</div>
+		</div>
+	
+		<div id="simulacao-container">
+			<canvas id="canvas"></canvas>
+		</div>
+	</section>
+</body>
+</html>
