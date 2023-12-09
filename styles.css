@@ -76,6 +76,11 @@ span {
     min-width: 100px; 
 }
 
+span {
+	background-color: #535353; 
+}
+
+
 button {
 	cursor: pointer;
 }
@@ -101,19 +106,49 @@ canvas {
     position: relative;
 }
 
+.cabecalho2 {
+	padding: 0% 1%; 
+}
+
+
 @media only screen and (max-width: 768px) {
     .Texto {
-        top: 60%; 
+        top: 90%; 
     }
 	.Texto2 {
         font-size: 90%; 
     }
-
-    .Texto h1, .Texto h2, .Texto h3 {
+	.sobre-projeto {
+		padding: 0.5% 
+	} 
+	.cabecalho {
+		padding: 0%; 
+	}
+	.Texto {
+    	top: 50%;
+    	left: 50%;
+	}
+	.controles-gerais {
+		gap: 2px;
+	
+		
+	}
+	.Texto h1, .Texto h2, .Texto h3 {
         font-size: 90%; 
     }
-}
+	
+	.controles-simulacao,
+	.controles-gravidade,
+	.controles-energia-escura,
+	.controles-zoom{
+ 
+    	gap: 3px;
+	}
 
-.cabecalho2 {
-	padding: 0% 1%; 
+	button,
+	span {
+		font-size: 7px; 
+		padding: 10px 0%; 
+		min-width: 80px; 
+	}
 }

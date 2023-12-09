@@ -1,12 +1,18 @@
 const taxaDeExpansao = 0.001; 
-const Limiar = 1900;
+const Limiar = 2000;
 const G = 100;
 
 let gravidade = G;
 let E = taxaDeExpansao;
-let controle = 0;
+let zoomLevel = 25;
+
 let esferas = [];
-let animationFrameId;
+
+function criarEsfera(x, y, vx, vy, raio) {
+	const massa = Math.PI * raio * raio; 
+    const cor = `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`;
+    esferas.push({ massa, x, y, vx, vy, raio, cor, fundida: false });
+}
 
 const container = document.getElementById('simulacao-container');
 const canvas = document.getElementById('canvas');
@@ -17,31 +23,40 @@ canvas.height = window.innerHeight;
 const centroX = canvas.width / 2;
 const centroY = canvas.height / 2;
 
-let zoomLevel = 100;
-
-function aplicarZoom() {
-    
-    canvas.style.transform = `scale(${zoomLevel / 100})`;
-    atualizarMostradorZoom(); 
+function ajustarTamanhoCanvas() {
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
 }
 
-function aumentarZoom() {
-	if (zoomLevel < 200){
-    	zoomLevel += 10; 
-    	aplicarZoom();
-	}
+function desenharEsferas() {
+	esferas.forEach(esfera => {
+        let gradiente = ctx.createRadialGradient(
+			esfera.x, esfera.y, 0,
+			esfera.x, esfera.y, esfera.raio
+        );
+		gradiente.addColorStop(0, esfera.cor); 
+        gradiente.addColorStop(0.2, esfera.cor);
+        gradiente.addColorStop(1, 'rgba(0, 0, 0, 0)'); 
+
+        ctx.beginPath();
+        ctx.arc(esfera.x, esfera.y, esfera.raio, 0, Math.PI * 2);
+        ctx.fillStyle = gradiente;
+        ctx.fill();
+	});
 }
 
-function diminuirZoom() {
-	if (zoomLevel > 10){
-    	zoomLevel -= 10; 
-    	aplicarZoom();
-	}
+function desenharFundo() {
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0); 
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.restore();
 }
 
-function atualizarMostradorZoom() {
-    document.getElementById('valor-zoom').textContent = `Z: ${zoomLevel}%`;
-}
+
+
+ajustarTamanhoCanvas();
+window.addEventListener('resize', ajustarTamanhoCanvas);
 
 function Gravidade() {
 	esferas.forEach((esfera1, i) => {
@@ -53,7 +68,8 @@ function Gravidade() {
                     
                 if (distancia < 1) return; 
                     
-                	const forca = gravidade * (esfera1.massa * esfera2.massa) / (distancia * distancia);
+                	const forca = (gravidade * (esfera1.massa * esfera2.massa) / (distancia * distancia))/2;
+					
                    	const ax = forca * dx / distancia;
 					const ay = forca * dy / distancia;
                     
@@ -64,42 +80,6 @@ function Gravidade() {
         	}
     	});
 	});
-}
-
-function atualizarMostradorGravidade() {
-  	document.getElementById('valor-gravidade').textContent = `G: ${(gravidade/10).toFixed(0)}`;
-}
-
-function aumentarGravidade() {
-	if (gravidade < 800) {
-  		gravidade *= 2; 
-  		atualizarMostradorGravidade();
-	}
-}
-
-function diminuirGravidade() {
-	if (gravidade > 12.5) {
-  		gravidade *= 0.5; 
-  		atualizarMostradorGravidade();
-	}
-}
-
-function atualizarMostradorEnergiaEscura() {
-    document.getElementById('valor-energia-escura').textContent = `E: ${E.toFixed(4)}`;
-}
-
-function aumentarEnergiaEscura() {
-	if (E < 0.008){
-    	E *= 2; 
-    	atualizarMostradorEnergiaEscura();
-	}
-}
-
-function diminuirEnergiaEscura() {
-	if (E > 0.000125) {
-    	E *= 0.5; 
-    	atualizarMostradorEnergiaEscura();
-	}
 }
 
 function expandirUniverso(Limiar) {
@@ -114,18 +94,20 @@ function expandirUniverso(Limiar) {
 			
 			if (distancia > Limiar) {
 
-            			const expansaoX = dx * E;
-            			const expansaoY = dy * E;
+            	const expansaoX = dx * (E/3);
+            	const expansaoY = dy * (E/3);
 
-            			esfera1.x -= expansaoX / 2;
-            			esfera1.y -= expansaoY / 2;
-            			esfera2.x += expansaoX / 2;
-            			esfera2.y += expansaoY / 2;
+            	esfera1.x -= expansaoX / 2;
+            	esfera1.y -= expansaoY / 2;
+           		esfera2.x += expansaoX / 2;
+				esfera2.y += expansaoY / 2;
 			}
+			
+
         }
 	}
 }
- 
+
 function Colisao() {
 	let esferasParaRemover = new Set();
 	for (let i = 0; i < esferas.length; i++) {
@@ -157,50 +139,67 @@ function Colisao() {
 	esferas = esferas.filter(esfera => !esferasParaRemover.has(esfera));
 }
 
-	
-function desenharFundo() {
-    ctx.save();
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-    ctx.fillStyle = 'rgba(0, 0, 0, 4)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.restore();
+function atualizarMostradorGravidade() {
+  	document.getElementById('valor-gravidade').textContent = `G: ${(gravidade/10).toFixed(0)}`;
 }
 
-function desenharEsferas() {
-	esferas.forEach(esfera => {
-        let gradiente = ctx.createRadialGradient(
-			esfera.x, esfera.y, 0,
-			esfera.x, esfera.y, esfera.raio
-        );
-		gradiente.addColorStop(0, esfera.cor); 
-        gradiente.addColorStop(0.2, esfera.cor);
-        gradiente.addColorStop(1, 'rgba(0, 0, 0, 0)'); 
-
-        ctx.beginPath();
-        ctx.arc(esfera.x, esfera.y, esfera.raio, 0, Math.PI * 2);
-        ctx.fillStyle = gradiente;
-        ctx.fill();
-	});
-}
-	
-function ajustarTamanhoCanvas() {
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
+function aumentarGravidade() {
+	if (gravidade < 800) {
+  		gravidade *= 2; 
+  		atualizarMostradorGravidade();
+	}
 }
 
-ajustarTamanhoCanvas();
-window.addEventListener('resize', ajustarTamanhoCanvas);
+function diminuirGravidade() {
+	if (gravidade > 12.5) {
+  		gravidade *= 0.5; 
+  		atualizarMostradorGravidade();
+	}
+}
 
-	
-function criarEsfera(x, y, vx, vy, raio) {
-	const massa = Math.PI * raio * raio; 
-    const cor = `rgb(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)})`;
-    esferas.push({ massa, x, y, vx, vy, raio, cor, fundida: false });
+function atualizarMostradorEnergiaEscura() {
+    document.getElementById('valor-energia-escura').textContent = `E: ${(E*10000).toFixed(0)}`;
+}
+
+function aumentarEnergiaEscura() {
+	if (E < 0.008){
+    	E *= 2; 
+    	atualizarMostradorEnergiaEscura();
+	}
+}
+function diminuirEnergiaEscura() {
+	if (E > 0.000125) {
+    	E *= 0.5; 
+    	atualizarMostradorEnergiaEscura();
+	}
+}
+
+function aplicarZoom() {
+    const escala = zoomLevel / 100;
+    ctx.setTransform(escala, 0, 0, escala, centroX - (escala * centroX), centroY - (escala * centroY));
+    atualizarMostradorZoom(); 
+}
+
+function aumentarZoom() {
+	if (zoomLevel < 50){
+    	zoomLevel += 5; 
+    	aplicarZoom();
+	}
+}
+function diminuirZoom() {
+	if (zoomLevel > 10){
+    	zoomLevel -= 5; 
+    	aplicarZoom();
+	}
+}
+function atualizarMostradorZoom() {
+    document.getElementById('valor-zoom').textContent = `Z: ${zoomLevel*4}%`;
 }
 
 let ultimoTempo;
-	
-function animar(tempoAtual) {
+let animationFrameId;
+
+function animar1(tempoAtual) {
 	if (!ultimoTempo) ultimoTempo = tempoAtual;
 		const deltaTime = (tempoAtual - ultimoTempo) / 1000; 
        	Gravidade();
@@ -213,12 +212,14 @@ function animar(tempoAtual) {
 		desenharFundo()
         desenharEsferas();
         ultimoTempo = tempoAtual;
-    	animationFrameId = requestAnimationFrame(animar); 
+    	animationFrameId = requestAnimationFrame(animar1); 
 }
 
 function animar2(tempoAtual) {
 	if (!ultimoTempo) ultimoTempo = tempoAtual;
         const deltaTime = (tempoAtual - ultimoTempo) / 1000; 
+	
+
 		expandirUniverso(0)
         Colisao();
 		
@@ -233,11 +234,12 @@ function animar2(tempoAtual) {
     	animationFrameId = requestAnimationFrame(animar2); 
 }
 
-function animar3(tempoAtual) {
+function animar(tempoAtual) {
 	if (!ultimoTempo) ultimoTempo = tempoAtual;
-		const deltaTime = (tempoAtual - ultimoTempo) / 1000; 
-        Gravidade();
-		expandirUniverso()
+		const deltaTime = (tempoAtual - ultimoTempo) / 1000;
+
+		Gravidade();
+		expandirUniverso(1050)
         Colisao();
 		
         esferas.forEach(esfera => {
@@ -245,63 +247,116 @@ function animar3(tempoAtual) {
             esfera.y += esfera.vy * deltaTime;
         });
 		
-		desenharFundo()
+		desenharFundo();
         desenharEsferas();
         ultimoTempo = tempoAtual;
-    	animationFrameId = requestAnimationFrame(animar3); 
+    	animationFrameId = requestAnimationFrame(animar); 
 }
 
-
+let a = 0;
 function iniciar(x){
 	if (animationFrameId) {
         cancelAnimationFrame(animationFrameId); 
     }
 	esferas = [];
-	criarEsfera(centroX, centroY, 0, 0, 10);  
-	criarEsfera(centroX - 50, centroY + 275, 0, 0, 15);  
-	criarEsfera(centroX + 150, centroY + 275, 0, 0, 15);  
-	criarEsfera(centroX + 653, centroY - 180, 0, 0, 5);  
-	criarEsfera(centroX - 215, centroY + 318, 0, 0, 10); 
-	criarEsfera(centroX + 304, centroY - 779, 0, 0, 10);
-	criarEsfera(centroX - 345, centroY - 454, 0, 0, 10); 
-	criarEsfera(centroX + 860, centroY - 379, 0, 0, 10);
-	criarEsfera(centroX + 200, centroY, 0, 0, 15);
-	
-	if (x == 1) animationFrameId = requestAnimationFrame(animar);
-	if (x == 2) animationFrameId = requestAnimationFrame(animar2);
-	if (x == 3) animationFrameId = requestAnimationFrame(animar3);
 
+
+	if (a == 1) {
+		zoomLevel = 25;
+		aplicarZoom();
+		a =0
+	}
+	
+	if (x == 1) {
+		
+		for (let i = 0; i < 111; i++) {
+    		criarEsfera(centroX +(getRandomInt(-2500, 2500)), centroY + (getRandomInt(-2500, 2500)), (getRandomInt(-250, 250)), (getRandomInt(-250, 250)), (getRandomInt(5, 30)))
+		}
+		
+		animationFrameId = requestAnimationFrame(animar1);
+	}
+	
+	if (x == 2) {
+		
+		for (let i = 0; i < 111; i++) {
+    		criarEsfera(centroX +(getRandomInt(-2500, 2500)), centroY + (getRandomInt(-2500, 2500)), 0, 0, (getRandomInt(5, 30)))
+		}
+		
+		animationFrameId = requestAnimationFrame(animar2);
+	}
+	
+	
+	if (x == 3) {
+		
+		for (let i = 0; i < 30; i++) {
+    		criarEsfera(centroX +(getRandomInt(-400, 400)), centroY + (getRandomInt(-400, 400)), 0, 0, (getRandomInt(5, 35)))
+		}
+	
+		for (let i = 0; i < 30; i++) {
+    		criarEsfera(centroX +(getRandomInt(-4000, -3200)), centroY + (getRandomInt(-400, 400)), 0, 0, (getRandomInt(5, 35)))
+		}
+	
+		for (let i = 0; i < 30; i++) {
+    		criarEsfera(centroX +(getRandomInt(3200, 4000)), centroY + (getRandomInt(-400, 400)), 0, 0, (getRandomInt(5, 35)))
+		}
+
+		for (let i = 0; i < 30; i++) {
+    		criarEsfera(centroX +(getRandomInt(-400, 400)), centroY + (getRandomInt(-4000, -3200)), 0, 0, (getRandomInt(5, 35)))
+		}
+	
+		for (let i = 0; i < 30; i++) {
+    		criarEsfera(centroX +(getRandomInt(-400, 400)), centroY + (getRandomInt(3200, 4000)), 0, 0, (getRandomInt(5, 35)))
+		}
+
+		zoomLevel = 10;
+		aplicarZoom();
+		animationFrameId = requestAnimationFrame(animar);
+		a=1;
+	}
 }
 
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function Posicao() {
+
+    const container = document.getElementById("simulacao-container") ;
+    const meio = container.offsetTop + container.offsetHeight / 2 + 640;
+
+	window.scrollTo({
+    	top: meio,
+    	behavior: "smooth"
+    }); 
+}
 
 document.getElementById('iniciar-simulacao').addEventListener('click', function() {
+	Posicao();
     iniciar(1); 
 });
-
 document.getElementById('iniciar-simulacao2').addEventListener('click', function() {
+	Posicao()
     iniciar(2); 
 });
-
 document.getElementById('iniciar-simulacao3').addEventListener('click', function() {
+	Posicao()
     iniciar(3); 
 });
 document.getElementById('aumentar-gravidade').addEventListener('click', function() {
 	aumentarGravidade();
 });
-
 document.getElementById('diminuir-gravidade').addEventListener('click',function() {
 	diminuirGravidade();
 });
-
 document.getElementById('aumentar-energia-escura').addEventListener('click', function() {
 	aumentarEnergiaEscura();
 });
-
 document.getElementById('diminuir-energia-escura').addEventListener('click', function() {
 	diminuirEnergiaEscura();
 });
-
 document.getElementById('zoom-in').addEventListener('click', aumentarZoom);
 document.getElementById('zoom-out').addEventListener('click', diminuirZoom);
 
-
+aplicarZoom()
